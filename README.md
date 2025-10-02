@@ -22,15 +22,21 @@ telco-churn-pipeline/
 ## Setup
 ```bash
 python -V
-pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 ## Train
 Try full dataset; if it fails, use sample:
+
+**Windows PowerShell:**
+```powershell
+try { python train_pipeline.py } catch { python train_pipeline.py --use_sample 1 }
+```
+
+**Linux/Mac Bash:**
 ```bash
-python train_pipeline.py || true
-python train_pipeline.py --use_sample 1
+python train_pipeline.py || python train_pipeline.py --use_sample 1
 ```
 
 ## Verify
