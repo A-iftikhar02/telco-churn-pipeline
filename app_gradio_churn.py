@@ -90,25 +90,21 @@ def build_demo():
     with gr.Blocks(title="Telco Churn Prediction") as demo:
         gr.Markdown("""
         ### Telco Churn Prediction
-        - Upload a CSV with the raw columns (excluding `Churn`) or
-        - Fill the form (columns detected from the model).
+        Upload a CSV with the raw columns (excluding `Churn`) for batch prediction.
         """)
-        with gr.Tab("Form"):
-            form_inputs = []
-            for col in expected:
-                form_inputs.append(gr.Textbox(label=col))
-            form_btn = gr.Button("Predict")
-            form_output = gr.JSON(label="Prediction")
-            form_btn.click(predict_from_form, inputs=form_inputs, outputs=form_output)
-        with gr.Tab("CSV Upload"):
-            file_in = gr.File(label="CSV with raw features")
-            csv_btn = gr.Button("Predict CSV")
-            csv_out = gr.JSON(label="Predictions")
-            csv_btn.click(predict_from_csv, inputs=[file_in], outputs=csv_out)
+        
+        file_in = gr.File(label="CSV with raw features", file_types=[".csv"])
+        csv_btn = gr.Button("Predict CSV")
+        csv_out = gr.Textbox(label="Predictions", lines=10)
+        csv_btn.click(predict_from_csv, inputs=[file_in], outputs=csv_out)
+        
+        gr.Markdown("""
+        ### Sample Input
+        Expected columns: """ + ", ".join(expected))
     return demo
 
 
 if __name__ == "__main__":
     port = find_open_port(7860)
     demo = build_demo()
-    demo.launch(server_name="127.0.0.1", server_port=port)
+    demo.launch(server_name="127.0.0.1", server_port=port, share=True)
