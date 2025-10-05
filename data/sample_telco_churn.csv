@@ -9,3 +9,4 @@ customerID,gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleL
 0008-ASDFG,Female,0,Yes,Yes,10,Yes,No,Fiber optic,No,No,Yes,No,Yes,No,Month-to-month,Yes,Electronic check,84.75,845.8,Yes
 0009-ZXCVB,Male,1,No,No,28,Yes,Yes,DSL,Yes,Yes,Yes,Yes,No,No,One year,No,Bank transfer (automatic),49.95,1397.45,No
 0010-POIUY,Female,0,No,No,4,Yes,No,Fiber optic,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,74.35,306.6,Yes
+

@@ -1,3 +1,4 @@
+
 import json
 from pathlib import Path
 
@@ -19,15 +20,47 @@ def load_any_dataset() -> pd.DataFrame:
     raise FileNotFoundError("No dataset to construct a sample input")
 
 
-def main():
-    model = joblib.load(MODEL_PATH)
-    df = load_any_dataset()
+def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    # Align with training: coerce TotalCharges to numeric and drop identifier
+    if "TotalCharges" in df.columns:
+        df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
     if "customerID" in df.columns:
         df = df.drop(columns=["customerID"])  # identifier not used
+    return df
+
+
+def get_expected_columns(model) -> list:
+    cols = getattr(model, "raw_feature_names_", None)
+    if cols:
+        return list(cols)
+    # Fallback: infer from a local dataset if available
+    for p in [DEFAULT_DATASET, SAMPLE_DATASET]:
+        if p.exists():
+            df = pd.read_csv(p)
+            df = preprocess_dataframe(df)
+            if "Churn" in df.columns:
+                df = df.drop(columns=["Churn"])  # target
+            return list(df.columns)
+    return []
+
+
+def main():
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Train the model first (run 'python train_pipeline.py').")
+
+    model = joblib.load(MODEL_PATH)
+
+    df = load_any_dataset()
+    df = preprocess_dataframe(df)
     if "Churn" in df.columns:
-        X = df.drop(columns=["Churn"]).head(1)
-    else:
-        X = df.head(1)
+        df = df.drop(columns=["Churn"])  # target not used for inference
+
+    # Build a single-row sample aligned with model's expected columns
+    expected_cols = get_expected_columns(model)
+    X = df.head(1)
+    if expected_cols:
+        # Reindex ensures presence/order; values filled will be imputed by pipeline later if needed
+        X = X.reindex(columns=expected_cols)
 
     pred = model.predict(X)[0]
     out = {"prediction": int(pred)}

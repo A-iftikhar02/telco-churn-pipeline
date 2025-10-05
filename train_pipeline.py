@@ -95,7 +95,7 @@ def build_pipeline(numeric_cols: List[str], categorical_cols: List[str]) -> Pipe
 
     categorical_transformer = Pipeline(steps=[
         ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("onehot", OneHotEncoder(handle_unknown="ignore"))
+        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
     ])
 
     preprocessor = ColumnTransformer(

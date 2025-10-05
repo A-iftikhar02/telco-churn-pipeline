@@ -5,6 +5,6 @@ numpy==1.26.4
 joblib==1.4.2
 requests==2.32.3
 # App
-gradio==4.44.0
+gradio==4.44.1
 # Utils
 packaging==24.1
